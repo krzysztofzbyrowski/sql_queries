@@ -1,0 +1,14 @@
+SELECT 
+p.price_id,
+pd.product_id, 
+pd.product_name, 
+pd.creation_date,
+pd.category_id,
+pd.en_category_name
+FROM `bigquery-kpi-engine.cba.gap_exp_NP` AS pd
+JOIN `bigquery-kpi-engine.dataWarehouse.pris_xx` AS p ON pd.product_id = p.product_id
+WHERE 
+p.store_id = 
+AND (pd.user = '' OR pd.user = '' OR pd.user = '')
+AND DATE(pd.creation_date) BETWEEN '2024-10-07' AND '2024-10-09'
+AND pd.country_code = 'se'
