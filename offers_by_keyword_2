@@ -1,0 +1,47 @@
+SELECT
+q.price_id,
+q.description,
+p.product_id,
+q.ean_code,
+q.inserted_at,
+p.product_name,
+w.store_id,
+r.store_name,
+t.store_category_id,
+l.store_category,
+w.country_code
+FROM `bigquery-kpi-engine.dataWarehouse.pris_xx` AS q
+JOIN `bigquery-kpi-engine.dataWarehouse.pris_expert_xx` AS t
+ON
+q.price_id = t.price_id
+JOIN `bigquery-kpi-engine.dataWarehouse.produkter_se` AS p
+ON
+q.product_id = p.product_id
+JOIN `bigquery-kpi-engine.dataWarehouse.foretag_markets_xx` AS w
+ON
+q.store_id = w.store_id
+JOIN
+`bigquery-kpi-engine.dataWarehouse.foretag_xx` AS r
+ON
+w.store_id = r.store_id
+JOIN `bigquery-kpi-engine.dataWarehouse.store_category_xx` AS l
+ON
+t.store_category_id = l.store_category_id
+WHERE
+(q.description LIKE ('%Gift Set%') OR q.description LIKE ('%gift set%') OR q.description LIKE ('%Duo Pack%') OR q.description LIKE ('%duo pack%') OR q.description LIKE ('%duo%') OR q.description LIKE ('%Box%') OR q.description LIKE ('%box%') OR q.description LIKE ('%Start Kit%') OR q.description LIKE ('%start kit%') OR q.description LIKE ('%Kit%') OR q.description LIKE ('%kit%') OR q.description LIKE ('%Presentförpackning%') OR q.description LIKE ('%presentförpackning%'))
+AND
+q.store_id IN (32411,28005,22076,8146,3356,35376,12705,30028,39439,39944,5936,6276,15677,4237,3049)
+AND
+p.visible = 0
+GROUP BY
+q.price_id,
+q.description,
+p.product_id,
+q.ean_code,
+p.product_name,
+w.store_id,
+r.store_name,
+q.inserted_at,
+t.store_category_id,
+l.store_category,
+w.country_code
