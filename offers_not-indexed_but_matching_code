@@ -1,0 +1,53 @@
+WITH
+  podpiete_kody AS (
+  SELECT
+    p.code,
+    l.product_id,
+  FROM
+    `bigquery-kpi-engine.dataWarehouse.produkt_ident_xx` AS p
+  INNER JOIN
+    `bigquery-kpi-engine.dataWarehouse.produkter_xx` AS l
+  ON
+    p.product_id = l.product_id
+  WHERE
+    l.visible = 1
+    AND
+    l.inserted_at > '2023-01-31' )
+SELECT
+  DISTINCT m.price_id,
+  m.ean_code,
+  m.product_id,
+  px.product_name,
+  px.visible,
+  pk.product_id AS code_to_product,
+  px2.product_name as destination_product,
+  px2.inserted_at as product_created,
+  CONCAT ("https://admin.prisjakt.io/admin_sort.php?pris_id=", m.price_id) AS link
+FROM
+  `bigquery-kpi-engine.dataWarehouse.pris_xx` AS m
+LEFT JOIN
+  `bigquery-kpi-engine.dataWarehouse.produkter_xx` AS px
+USING
+  (product_id)
+LEFT JOIN
+  podpiete_kody AS pk
+ON
+  (m.ean_code=pk.code)
+LEFT JOIN
+  `bigquery-kpi-engine.dataWarehouse.produkter_xx` AS px2
+ON
+  (pk.product_id=px2.product_id)
+WHERE
+  m.ean_code != ''
+  AND m.product_id != 26218
+  AND px.visible=0
+  AND px2.visible=1
+  and px2.category_id = 2490
+  AND px2.inserted_at >= "2019-01-01"
+  AND m.ean_code IN (
+  SELECT
+    code
+  FROM
+    podpiete_kody)
+ORDER BY
+  code_to_product
