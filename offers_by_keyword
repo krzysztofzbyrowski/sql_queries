@@ -1,0 +1,35 @@
+SELECT
+q.price_id,
+q.description,
+p.product_id,
+q.ean_code,
+q.inserted_at,
+p.product_name,
+w.store_id,
+r.store_name,
+t.store_category_id,
+l.store_category,
+w.country_code
+FROM `bigquery-kpi-engine.dataWarehouse.pris_xx` AS q
+JOIN `bigquery-kpi-engine.dataWarehouse.pris_expert_xx` AS t
+ON
+q.price_id = t.price_id
+JOIN `bigquery-kpi-engine.dataWarehouse.produkter_se` AS p
+ON
+q.product_id = p.product_id
+JOIN `bigquery-kpi-engine.dataWarehouse.foretag_markets_xx` AS w
+ON
+q.store_id = w.store_id
+JOIN
+`bigquery-kpi-engine.dataWarehouse.foretag_xx` AS r
+ON
+w.store_id = r.store_id
+JOIN `bigquery-kpi-engine.dataWarehouse.store_category_xx` AS l
+ON
+t.store_category_id = l.store_category_id
+WHERE
+(q.description LIKE '%adventskalender%' OR q.description LIKE '%advent calendar%' OR q.description LIKE '%advent kalender%' OR q.description LIKE '%Julkalender%' OR q.description LIKE '%Adventskalender%' OR q.description LIKE '%Advent Calendar%' OR q.description LIKE '%Advent Kalender%' OR q.description LIKE '%julkalender%' OR q.description LIKE '%julekalender%' OR q.description LIKE '%Julekalender%')
+AND
+p.visible = 0
+AND
+w.store_id IN ()
