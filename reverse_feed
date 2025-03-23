@@ -1,0 +1,24 @@
+SELECT 
+p.store_price_id,
+p.description,
+p.offer_url,
+l.store_category
+FROM `bigquery-kpi-engine.dataWarehouse.pris_xx` AS p
+JOIN `bigquery-kpi-engine.dataWarehouse.pris_expert_xx` AS e
+ON p.price_id = e.price_id
+JOIN `bigquery-kpi-engine.dataWarehouse.produkter_xx` AS q
+ON p.product_id = q.product_id
+JOIN `bigquery-kpi-engine.dataWarehouse.store_category_xx` AS w
+ON p.product_id = w.product_id
+JOIN `bigquery-kpi-engine.dataWarehouse.store_category_xx` AS l
+ON
+e.store_category_id = l.store_category_id
+WHERE
+p.store_id = 
+AND
+q.visible = 0
+GROUP BY
+p.store_price_id,
+p.description,
+p.offer_url,
+l.store_category
