@@ -1,0 +1,22 @@
+SELECT
+    p.ean_code,
+    STRING_AGG(DISTINCT CAST(pr.product_id AS STRING)) AS product_ids,
+    STRING_AGG(DISTINCT pr.product_name) AS product_names
+FROM
+    `bigquery-kpi-engine.dataWarehouse.pris_xx` AS p
+JOIN
+    `bigquery-kpi-engine.dataWarehouse.produkter_xx` AS pr
+ON
+    p.product_id = pr.product_id
+WHERE
+    pr.visible = 1
+    AND p.ean_code IS NOT NULL
+    AND p.ean_code != ''
+    AND LENGTH(p.ean_code) IN (13, 14)
+    AND p.ean_code NOT LIKE '0000000000000%'
+GROUP BY
+    p.ean_code
+HAVING
+    COUNT(DISTINCT pr.product_id) > 1
+ORDER BY
+    p.ean_code
