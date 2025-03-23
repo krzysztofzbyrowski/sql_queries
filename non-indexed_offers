@@ -1,0 +1,25 @@
+WITH filtered_products AS (
+  SELECT product_id
+  FROM
+  `bigquery-kpi-engine.dataWarehouse.produkter_xx`
+  WHERE 
+  visible = 0
+)
+SELECT DISTINCT
+p.price_id,
+p.ean_code,
+sc.store_category
+FROM
+`bigquery-kpi-engine.dataWarehouse.pris_xx` AS p
+JOIN
+filtered_products AS pr
+ON
+p.product_id = pr.product_id
+LEFT JOIN
+`bigquery-kpi-engine.dataWarehouse.store_category_xx` AS sc
+ON
+p.product_id = sc.product_id
+AND
+p.store_id = sc.store_id
+WHERE
+p.store_id = 
