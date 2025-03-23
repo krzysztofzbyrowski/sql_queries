@@ -1,0 +1,15 @@
+SELECT 
+DISTINCT(p.ean_code),
+p.product_id,
+l.product_name,
+l.category_id,
+s.category_name
+FROM `bigquery-kpi-engine.dataWarehouse.pris_xx` AS p
+JOIN
+`bigquery-kpi-engine.dataWarehouse.produkter_se` AS l
+ON p.product_id = l.product_id
+JOIN `bigquery-kpi-engine.dataWarehouse.kategorier_gb` AS s
+ON
+l.category_id = s.category_id
+WHERE
+p.product_id IN()
