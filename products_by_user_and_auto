@@ -1,0 +1,17 @@
+SELECT
+    category_id,
+    en_category_name AS category_name,
+    COUNT(DISTINCT product_id) AS total_products_created,
+    COUNT(DISTINCT CASE WHEN user = '' THEN product_id ELSE NULL END) AS products_created_by_user,
+    COUNT(DISTINCT CASE WHEN user = '' THEN product_id ELSE NULL END) AS products_created_by_user_auto
+FROM 
+    `bigquery-kpi-engine.cba.gap_exp_NP`
+WHERE
+    creation_date BETWEEN '2024-09-01' AND '2024-12-18'
+    AND category_id IN (393,1594,386,766,555,101,1209,889,890,546,1912,2103,1760,2022,836,25,1110,40,1326,47,37,1711,1756,917,28,645)
+    AND country_code = 'se'
+GROUP BY
+    category_id,
+    en_category_name
+ORDER BY
+    total_products_created DESC
