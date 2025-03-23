@@ -1,0 +1,13 @@
+SELECT
+pr.product_id,
+pr.product_name,
+STRINg_AGG(DISTINCT p.ean_code) AS ean_codes
+FROM `bigquery-kpi-engine.dataWarehouse.produkter_se` AS pr
+JOIN `bigquery-kpi-engine.dataWarehouse.pris_xx` AS p
+ON
+pr.product_id = p.product_id
+WHERE
+pr.brand_id = 46455
+GROUP BY
+pr.product_id,
+pr.product_name
