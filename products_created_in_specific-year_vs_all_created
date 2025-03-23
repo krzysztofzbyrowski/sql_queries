@@ -1,0 +1,33 @@
+WITH
+  p21 AS (
+  SELECT
+    category_id,
+    COUNT(DISTINCT(product_id)) AS product_2021
+  FROM
+    `bigquery-kpi-engine.dataWarehouse.produkter_se`
+  WHERE
+    inserted_at > '2021-01-01'
+    AND visible = 1
+  GROUP BY
+    category_id )
+SELECT
+  q.category_id,
+  p.category_name,
+  p21.product_2021,
+  COUNT(DISTINCT(q.product_id)) AS ile_produktow,
+FROM
+  `bigquery-kpi-engine.dataWarehouse.produkter_se` AS q
+JOIN
+  `bigquery-kpi-engine.dataWarehouse.kategorier_se` AS p
+ON
+  q.category_id = p.category_id
+LEFT JOIN
+  p21
+ON
+  (q.category_id=p21.category_id)
+WHERE
+  q.visible = 1
+GROUP BY
+  q.category_id,
+  p.category_name,
+  p21.product_2021
