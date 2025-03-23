@@ -1,0 +1,10 @@
+SELECT 
+    pr.brand_id,
+    br.brand_name,
+    STRING_AGG(DISTINCT CAST(pr.category_id AS STRING), ', ') AS categories_present
+FROM `bigquery-kpi-engine.dataWarehouse.produkter_xx` AS pr
+JOIN `bigquery-kpi-engine.dataWarehouse.tillverkare_xx` AS br
+    ON pr.brand_id = br.brand_id
+WHERE pr.category_id IN (988,1001,990,992,1262,1005,989,1233,991,987,993,995)
+GROUP BY pr.brand_id, br.brand_name
+ORDER BY br.brand_name
