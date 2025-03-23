@@ -1,0 +1,84 @@
+WITH
+  ranked_stores AS (
+  SELECT
+    pr.store_id,
+    f.store_name,
+    p.category_id,
+    ku.category_name,
+    COUNT (pr.price_id) AS number_prices,
+    ROW_NUMBER() OVER (PARTITION BY p.category_id ORDER BY COUNT(pr.price_id) DESC) AS ranking
+  FROM
+    `bigquery-kpi-engine.dataWarehouse.pris_xx` AS pr
+  LEFT JOIN
+    `bigquery-kpi-engine.dataWarehouse.foretag_xx` AS f
+  USING
+    (store_id)
+  JOIN
+    `bigquery-kpi-engine.dataWarehouse.produkter_xx` AS p
+  ON
+    pr.product_id = p.product_id
+  JOIN
+    `bigquery-kpi-engine.dataWarehouse.kategorier_se` AS ku
+  ON
+    ku.category_id = p.category_id
+  WHERE
+    f.country_code='se'
+    AND store_id NOT IN (429,
+      6566,
+      5696,
+      675,
+      38513,
+      31588,
+      6495,
+      34773,
+      5930,
+      6168,
+      14587,
+      11373,
+      11782,
+      17644,
+      6370,
+      11225,
+      6437,
+      7253,
+      7354,
+      6108,
+      29404,
+      11606,
+      12988,
+      22037,
+      36364,
+      17689,
+      6147,
+      5859,
+      7254,
+      11859,
+      12652,
+      14193,
+      7956,
+      16331,
+      7275,
+      7308,
+      6188,
+      6550,
+      8920,
+      7792,
+      9613,
+      7059
+      )
+    AND p.visible = 1
+  GROUP BY
+    p.category_id,
+    ku.category_name,
+    pr.store_id,
+    f.store_name )
+SELECT
+  category_id,
+  category_name,
+  store_id,
+  store_name,
+  number_prices
+FROM
+  ranked_stores
+WHERE
+  ranking <= 8
