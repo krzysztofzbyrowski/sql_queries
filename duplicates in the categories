@@ -1,0 +1,36 @@
+WITH ProductCounts AS (
+  -- Step 1: Count how many times each productName appears within each InternalCategoryId
+  SELECT
+    InternalCategoryId,
+    productName,
+    COUNT(productId) AS product_count
+  FROM
+    `prd-data-warehouse-31l2.products.products`
+  GROUP BY
+    InternalCategoryId,
+    productName
+),
+CategoryDuplicates AS (
+  -- Step 2: Filter for groups with duplicates and sum the *extra* instances
+  SELECT
+    InternalCategoryId,
+    SUM(product_count - 1) AS countOfDuplicates
+  FROM
+    ProductCounts
+  WHERE
+    product_count > 1 -- Only include products that are part of a duplicate group
+  GROUP BY
+    InternalCategoryId
+)
+-- Step 3: Join the duplicate counts with the categories table to get the name
+SELECT
+  cats.InternalCategoryId,
+  cats.InternalCategoryName,
+  dups.countOfDuplicates
+FROM
+  CategoryDuplicates AS dups
+JOIN
+  `prd-data-warehouse-31l2.categories.internal_categories` AS cats
+  ON dups.InternalCategoryId = cats.InternalCategoryId
+ORDER BY
+  dups.countOfDuplicates DESC
