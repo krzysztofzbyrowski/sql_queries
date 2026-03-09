@@ -1,0 +1,27 @@
+SELECT 
+    p.product_id,
+    p.product_name,
+    MAX(CASE WHEN prn.row_num = 1 THEN prn.description END) AS description_1,
+    MAX(CASE WHEN prn.row_num = 2 THEN prn.description END) AS description_2,
+    MAX(CASE WHEN prn.row_num = 3 THEN prn.description END) AS description_3,
+    MAX(CASE WHEN prn.row_num = 4 THEN prn.description END) AS description_4,
+    MAX(CASE WHEN prn.row_num = 5 THEN prn.description END) AS description_5,
+    MAX(CASE WHEN prn.row_num = 6 THEN prn.description END) AS description_6,
+    MAX(CASE WHEN prn.row_num = 7 THEN prn.description END) AS description_7,
+    MAX(CASE WHEN prn.row_num = 8 THEN prn.description END) AS description_8,
+    MAX(CASE WHEN prn.row_num = 9 THEN prn.description END) AS description_9,
+    MAX(CASE WHEN prn.row_num = 10 THEN prn.description END) AS description_10,
+   
+FROM `bigquery-kpi-engine.dataWarehouse.produkter_xx` AS p
+LEFT JOIN (
+    SELECT 
+        pr.product_id,
+        pr.description,
+        ROW_NUMBER() OVER (PARTITION BY pr.product_id ORDER BY pr.description) AS row_num
+    FROM `bigquery-kpi-engine.dataWarehouse.pris_xx` AS pr
+) prn ON p.product_id = prn.product_id
+WHERE p.category_id = 2
+  AND p.brand_id IN (8,2149,13,106)           
+GROUP BY 
+p.product_id, 
+p.product_name
