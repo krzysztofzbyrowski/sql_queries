@@ -1,0 +1,19 @@
+DECLARE category_ids ARRAY<INT64> DEFAULT [1107];
+WITH products_in_scope AS (
+  SELECT p.product_id, p.product_name
+  FROM `bigquery-kpi-engine.dataWarehouse.produkter_xx` AS p
+  WHERE p.category_id IN UNNEST(category_ids)
+),
+products_with_exact_words AS (
+  SELECT DISTINCT pr.product_id
+  FROM `bigquery-kpi-engine.dataWarehouse.pris_xx` AS pr
+  WHERE pr.description IS NOT NULL
+    AND REGEXP_CONTAINS(
+      pr.description,
+      r'(?i)\b(dubb|pigg|dubbdäck|nastarenkaat|dubbade|studded)\b'
+    )
+)
+SELECT pis.product_id, pis.product_name
+FROM products_in_scope AS pis
+JOIN products_with_exact_words USING (product_id)
+ORDER BY pis.product_id;
